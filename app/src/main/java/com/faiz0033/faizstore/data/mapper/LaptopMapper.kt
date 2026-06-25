@@ -16,11 +16,16 @@ fun LaptopEntity.toDomain(): Laptop {
         ram = ram,
         storage = storage,
         category = category,
-        stock = stock
+        stock = stock,
+        ownerEmail = ownerEmail
     )
 }
 
-fun LaptopDto.toEntity(): LaptopEntity {
+/**
+ * Convert API response (DTO) to Room Entity.
+ * Data coming from the API is already synced, so isSynced = 1.
+ */
+fun LaptopDto.toEntity(ownerEmail: String): LaptopEntity {
     return LaptopEntity(
         id = id,
         name = name,
@@ -32,11 +37,17 @@ fun LaptopDto.toEntity(): LaptopEntity {
         ram = ram,
         storage = storage,
         category = category,
-        stock = stock
+        stock = stock,
+        ownerEmail = ownerEmail,
+        isSynced = 1
     )
 }
 
-fun Laptop.toEntity(): LaptopEntity {
+/**
+ * Convert domain model to Room Entity.
+ * isSynced: 0 = not synced, 1 = synced.
+ */
+fun Laptop.toEntity(isSynced: Int = 0): LaptopEntity {
     return LaptopEntity(
         id = id,
         name = name,
@@ -48,7 +59,9 @@ fun Laptop.toEntity(): LaptopEntity {
         ram = ram,
         storage = storage,
         category = category,
-        stock = stock
+        stock = stock,
+        ownerEmail = ownerEmail,
+        isSynced = isSynced
     )
 }
 
@@ -64,6 +77,7 @@ fun Laptop.toDto(): LaptopDto {
         ram = ram,
         storage = storage,
         category = category,
-        stock = stock
+        stock = stock,
+        ownerEmail = ownerEmail
     )
 }

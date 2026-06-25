@@ -10,7 +10,9 @@ import retrofit2.http.Path
 
 interface LaptopApiService {
     @GET("laptops")
-    suspend fun getAllLaptops(): List<LaptopDto>
+    suspend fun getAllLaptops(
+        @retrofit2.http.Query("ownerEmail") ownerEmail: String? = null
+    ): List<LaptopDto>
 
     @POST("laptops")
     suspend fun addLaptop(@Body laptop: LaptopDto): LaptopDto

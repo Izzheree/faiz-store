@@ -11,5 +11,6 @@ data class Laptop(
     val ram: String?,
     val storage: String?,
     val category: String?,
-    val stock: Int?
+    val stock: Int?,
+    val ownerEmail: String
 )

@@ -15,5 +15,6 @@ data class LaptopDto(
     @Json(name = "ram") val ram: String?,
     @Json(name = "storage") val storage: String?,
     @Json(name = "category") val category: String?,
-    @Json(name = "stock") val stock: Int?
+    @Json(name = "stock") val stock: Int?,
+    @Json(name = "ownerEmail") val ownerEmail: String?
 )

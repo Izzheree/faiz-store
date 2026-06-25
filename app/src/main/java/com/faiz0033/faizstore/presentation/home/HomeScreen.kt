@@ -9,11 +9,14 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.faiz0033.faizstore.R
 import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import com.faiz0033.faizstore.presentation.common.components.EmptyState
 import com.faiz0033.faizstore.presentation.common.components.ErrorState
@@ -24,14 +27,19 @@ import com.faiz0033.faizstore.presentation.home.components.LaptopCard
 @Composable
 fun HomeScreen(
     laptopRepository: LaptopRepository,
+    ownerEmail: String,
     onNavigateToDetail: (String) -> Unit,
     onNavigateToAdd: () -> Unit,
     onNavigateToProfile: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModel.Factory(laptopRepository)
+        factory = HomeViewModel.Factory(laptopRepository, ownerEmail)
     )
+    
+    LaunchedEffect(Unit) {
+        viewModel.sync()
+    }
     
     val uiState by viewModel.uiState.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
@@ -40,20 +48,17 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("FaizTech") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                ),
-                actions = {                    IconButton(onClick = onNavigateToProfile) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = "Profile")
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = onNavigateToProfile) {
+                        Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.profile))
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onNavigateToAdd) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Laptop")
+                Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.add_laptop))
             }
         }
     ) { paddingValues ->
@@ -68,7 +73,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                placeholder = { Text("Search laptops...") },
+                placeholder = { Text(stringResource(R.string.search_laptops)) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
                 singleLine = true,
                 shape = MaterialTheme.shapes.large

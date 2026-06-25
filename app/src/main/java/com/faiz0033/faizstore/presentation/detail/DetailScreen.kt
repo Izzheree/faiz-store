@@ -24,6 +24,8 @@ import com.faiz0033.faizstore.domain.model.Laptop
 import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import com.faiz0033.faizstore.presentation.common.components.ErrorState
 import com.faiz0033.faizstore.presentation.common.components.LoadingState
+import com.faiz0033.faizstore.utils.toRupiah
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,7 +48,7 @@ fun DetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Laptop Details") },
+                title = { Text(stringResource(R.string.laptop_details)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -54,10 +56,10 @@ fun DetailScreen(
                 },
                 actions = {
                     IconButton(onClick = { onNavigateToEdit(laptopId) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit")
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit))
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.delete), tint = MaterialTheme.colorScheme.error)
                     }
                 }
             )
@@ -81,10 +83,10 @@ fun DetailScreen(
                         viewModel.clearDeleteError()
                     }
                 },
-                title = { Text("Delete Laptop") },
+                title = { Text(stringResource(R.string.delete_laptop)) },
                 text = { 
                     Column {
-                        Text("Are you sure you want to delete this laptop? This action cannot be undone.")
+                        Text(stringResource(R.string.delete_confirmation))
                         if (deleteError != null) {
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(deleteError!!, color = MaterialTheme.colorScheme.error)
@@ -99,7 +101,7 @@ fun DetailScreen(
                         if (isDeleting) {
                             CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                         } else {
-                            Text("Delete", color = MaterialTheme.colorScheme.error)
+                            Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
                         }
                     }
                 },
@@ -111,7 +113,7 @@ fun DetailScreen(
                         },
                         enabled = !isDeleting
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -155,7 +157,7 @@ fun LaptopDetailContent(laptop: Laptop) {
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "Rp ${laptop.price}",
+            text = laptop.price.toRupiah(),
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold
@@ -163,22 +165,22 @@ fun LaptopDetailContent(laptop: Laptop) {
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        DetailItem(label = "Category", value = laptop.category ?: "-")
-        DetailItem(label = "Processor", value = laptop.processor ?: "-")
-        DetailItem(label = "RAM", value = laptop.ram ?: "-")
-        DetailItem(label = "Storage", value = laptop.storage ?: "-")
-        DetailItem(label = "Stock", value = laptop.stock?.toString() ?: "0")
+        DetailItem(label = stringResource(R.string.category), value = laptop.category ?: "-")
+        DetailItem(label = stringResource(R.string.processor), value = laptop.processor ?: "-")
+        DetailItem(label = stringResource(R.string.ram), value = laptop.ram ?: "-")
+        DetailItem(label = stringResource(R.string.storage), value = laptop.storage ?: "-")
+        DetailItem(label = stringResource(R.string.stock), value = laptop.stock?.toString() ?: "0")
         
         Spacer(modifier = Modifier.height(16.dp))
         
         Text(
-            text = "Description",
+            text = stringResource(R.string.description),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = laptop.description ?: "No description available.",
+            text = laptop.description ?: stringResource(R.string.no_description_available),
             style = MaterialTheme.typography.bodyLarge
         )
     }

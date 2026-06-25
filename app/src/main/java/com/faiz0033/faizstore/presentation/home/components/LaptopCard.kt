@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.faiz0033.faizstore.R
 import com.faiz0033.faizstore.domain.model.Laptop
+import com.faiz0033.faizstore.utils.toRupiah
 
 @Composable
 fun LaptopCard(
@@ -71,7 +72,7 @@ fun LaptopCard(
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "Rp ${laptop.price}",
+                    text = laptop.price.toRupiah(),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold

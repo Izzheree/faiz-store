@@ -85,6 +85,6 @@ class DefaultAppContainer(private val context: Context) : AppContainer {
     }
 
     override val laptopRepository: LaptopRepository by lazy {
-        LaptopRepositoryImpl(laptopDatabase.laptopDao(), laptopApiService)
+        LaptopRepositoryImpl(laptopDatabase.laptopDao(), laptopApiService, imageUploadRepository)
     }
 }

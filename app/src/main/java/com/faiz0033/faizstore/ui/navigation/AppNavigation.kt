@@ -31,7 +31,12 @@ fun AppNavigation(
             }
         }
         is AuthState.Authenticated -> {
-            val container = (androidx.compose.ui.platform.LocalContext.current.applicationContext as com.faiz0033.faizstore.FaizStoreApplication).container
+            val container = (androidx.compose.ui.platform.LocalContext.current.applicationContext
+                    as com.faiz0033.faizstore.FaizStoreApplication).container
+            
+            // Get the current user's email to scope data
+            val userEmail by authViewModel.userEmail.collectAsState()
+            val ownerEmail = userEmail ?: ""
             
             NavHost(
                 navController = navController,
@@ -41,6 +46,7 @@ fun AppNavigation(
                 composable("home") {
                     com.faiz0033.faizstore.presentation.home.HomeScreen(
                         laptopRepository = container.laptopRepository,
+                        ownerEmail = ownerEmail,
                         onNavigateToDetail = { id -> navController.navigate("detail/$id") },
                         onNavigateToAdd = { navController.navigate("add") },
                         onNavigateToProfile = { navController.navigate("profile") }
@@ -59,6 +65,7 @@ fun AppNavigation(
                     com.faiz0033.faizstore.presentation.add_edit.AddEditLaptopScreen(
                         laptopRepository = container.laptopRepository,
                         imageUploadRepository = container.imageUploadRepository,
+                        ownerEmail = ownerEmail,
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
@@ -67,6 +74,7 @@ fun AppNavigation(
                     com.faiz0033.faizstore.presentation.add_edit.AddEditLaptopScreen(
                         laptopRepository = container.laptopRepository,
                         imageUploadRepository = container.imageUploadRepository,
+                        ownerEmail = ownerEmail,
                         onNavigateBack = { navController.popBackStack() },
                         laptopId = id
                     )

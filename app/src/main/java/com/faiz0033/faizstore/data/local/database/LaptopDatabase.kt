@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.faiz0033.faizstore.data.local.dao.LaptopDao
 import com.faiz0033.faizstore.data.local.entity.LaptopEntity
 
-@Database(entities = [LaptopEntity::class], version = 2, exportSchema = false)
+@Database(entities = [LaptopEntity::class], version = 3, exportSchema = false)
 abstract class LaptopDatabase : RoomDatabase() {
     abstract fun laptopDao(): LaptopDao
 }

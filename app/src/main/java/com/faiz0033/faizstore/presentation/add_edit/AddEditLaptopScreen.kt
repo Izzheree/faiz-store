@@ -15,9 +15,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.faiz0033.faizstore.R
 import com.faiz0033.faizstore.domain.repository.ImageUploadRepository
 import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import kotlinx.coroutines.flow.collectLatest
@@ -27,12 +29,13 @@ import kotlinx.coroutines.flow.collectLatest
 fun AddEditLaptopScreen(
     laptopRepository: LaptopRepository,
     imageUploadRepository: ImageUploadRepository,
+    ownerEmail: String,
     onNavigateBack: () -> Unit,
     laptopId: String? = null,
     modifier: Modifier = Modifier
 ) {
     val viewModel: AddEditLaptopViewModel = viewModel(
-        factory = AddEditLaptopViewModel.Factory(laptopRepository, imageUploadRepository, laptopId)
+        factory = AddEditLaptopViewModel.Factory(laptopRepository, imageUploadRepository, ownerEmail, laptopId)
     )
 
     val context = LocalContext.current
@@ -63,6 +66,18 @@ fun AddEditLaptopScreen(
             inputStream?.close()
             if (bytes != null) {
                 viewModel.setImageBytes(bytes)
+                
+                try {
+                    val imagesDir = java.io.File(context.filesDir, "laptop_images")
+                    if (!imagesDir.exists()) {
+                        imagesDir.mkdirs()
+                    }
+                    val file = java.io.File(imagesDir, "img_${System.currentTimeMillis()}.jpg")
+                    file.writeBytes(bytes)
+                    viewModel.setLocalImagePath(file.absolutePath)
+                } catch (e: Exception) {
+                    // Ignore caching errors
+                }
             }
         }
     }
@@ -78,7 +93,12 @@ fun AddEditLaptopScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (laptopId == null) "Add Laptop" else "Edit Laptop") },
+                title = { 
+                    Text(
+                        if (laptopId == null) stringResource(R.string.add_laptop) 
+                        else stringResource(R.string.edit_laptop)
+                    ) 
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -113,13 +133,13 @@ fun AddEditLaptopScreen(
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (selectedImageUri != null) "Image Selected" else "Select Image")
+                    Text(if (selectedImageUri != null) stringResource(R.string.image_selected) else stringResource(R.string.select_image))
                 }
 
                 OutlinedTextField(
                     value = name,
                     onValueChange = { viewModel.name.value = it },
-                    label = { Text("Name *") },
+                    label = { Text(stringResource(R.string.name_req)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -127,7 +147,7 @@ fun AddEditLaptopScreen(
                 OutlinedTextField(
                     value = brand,
                     onValueChange = { viewModel.brand.value = it },
-                    label = { Text("Brand *") },
+                    label = { Text(stringResource(R.string.brand_req)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -135,7 +155,7 @@ fun AddEditLaptopScreen(
                 OutlinedTextField(
                     value = category,
                     onValueChange = { viewModel.category.value = it },
-                    label = { Text("Category") },
+                    label = { Text(stringResource(R.string.category)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -144,7 +164,7 @@ fun AddEditLaptopScreen(
                     OutlinedTextField(
                         value = price,
                         onValueChange = { viewModel.price.value = it },
-                        label = { Text("Price *") },
+                        label = { Text(stringResource(R.string.price_req)) },
                         modifier = Modifier.weight(1f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true
@@ -152,7 +172,7 @@ fun AddEditLaptopScreen(
                     OutlinedTextField(
                         value = stock,
                         onValueChange = { viewModel.stock.value = it },
-                        label = { Text("Stock") },
+                        label = { Text(stringResource(R.string.stock)) },
                         modifier = Modifier.weight(1f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true
@@ -162,7 +182,7 @@ fun AddEditLaptopScreen(
                 OutlinedTextField(
                     value = processor,
                     onValueChange = { viewModel.processor.value = it },
-                    label = { Text("Processor") },
+                    label = { Text(stringResource(R.string.processor)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true
                 )
@@ -171,7 +191,7 @@ fun AddEditLaptopScreen(
                     OutlinedTextField(
                         value = ram,
                         onValueChange = { viewModel.ram.value = it },
-                        label = { Text("RAM") },
+                        label = { Text(stringResource(R.string.ram)) },
                         modifier = Modifier.weight(1f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true
@@ -179,7 +199,7 @@ fun AddEditLaptopScreen(
                     OutlinedTextField(
                         value = storage,
                         onValueChange = { viewModel.storage.value = it },
-                        label = { Text("Storage") },
+                        label = { Text(stringResource(R.string.storage)) },
                         modifier = Modifier.weight(1f),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true
@@ -189,7 +209,7 @@ fun AddEditLaptopScreen(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { viewModel.description.value = it },
-                    label = { Text("Description") },
+                    label = { Text(stringResource(R.string.description)) },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3
                 )
@@ -201,7 +221,7 @@ fun AddEditLaptopScreen(
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isSaving
                 ) {
-                    Text(if (isSaving) "Saving..." else "Save Laptop")
+                    Text(if (isSaving) stringResource(R.string.saving) else stringResource(R.string.save_laptop))
                 }
             }
 
@@ -219,7 +239,7 @@ fun AddEditLaptopScreen(
                         ) {
                             CircularProgressIndicator()
                             Spacer(modifier = Modifier.height(16.dp))
-                            Text(if (isUploadingImage) "Uploading Image..." else "Saving to Database...")
+                            Text(if (isUploadingImage) stringResource(R.string.uploading_image) else stringResource(R.string.saving_to_database))
                         }
                     }
                 }

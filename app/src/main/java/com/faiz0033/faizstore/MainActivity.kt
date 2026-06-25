@@ -24,12 +24,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FaizStoreTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavigation(
-                        authViewModel = authViewModel,
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppNavigation(
+                    authViewModel = authViewModel,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

@@ -18,6 +18,7 @@ val imgbbApiKey = localProperties.getProperty("IMGBB_API_KEY", "\"\"")
 
 ksp {
     arg("room.generateKotlin", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 android {

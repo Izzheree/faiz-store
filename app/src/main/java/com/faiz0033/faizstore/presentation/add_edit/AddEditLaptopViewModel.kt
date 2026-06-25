@@ -16,6 +16,7 @@ import java.util.UUID
 class AddEditLaptopViewModel(
     private val laptopRepository: LaptopRepository,
     private val imageUploadRepository: ImageUploadRepository,
+    private val ownerEmail: String,
     private val laptopId: String? = null
 ) : ViewModel() {
 
@@ -34,6 +35,13 @@ class AddEditLaptopViewModel(
     
     // Selected image bytes ready for upload
     private var selectedImageBytes: ByteArray? = null
+
+    // Local image path for offline display fallback
+    private var localImagePath: String? = null
+
+    fun setLocalImagePath(path: String) {
+        localImagePath = path
+    }
 
     private val _isSaving = MutableStateFlow(false)
     val isSaving: StateFlow<Boolean> = _isSaving.asStateFlow()
@@ -100,16 +108,25 @@ class AddEditLaptopViewModel(
                 _isUploadingImage.value = false
                 
                 result.fold(
-                    onSuccess = { url -> finalImageUrl = url },
+                    onSuccess = { url -> 
+                        finalImageUrl = url 
+                    },
                     onFailure = { e ->
-                        _error.value = "Image upload failed: ${e.message}"
-                        _isSaving.value = false
-                        return@launch
+                        // Fallback to local image path if upload fails (e.g., offline)
+                        if (localImagePath != null) {
+                            finalImageUrl = "file://$localImagePath"
+                        } else {
+                            _error.value = "Image upload failed: ${e.message}"
+                            _isSaving.value = false
+                            return@launch
+                        }
                     }
                 )
+            } else if (localImagePath != null) {
+                finalImageUrl = "file://$localImagePath"
             }
 
-            // 2. Save Laptop
+            // 2. Save Laptop (offline-first: saves to Room first, then tries API)
             val laptop = Laptop(
                 id = laptopId ?: UUID.randomUUID().toString(),
                 name = currentName,
@@ -121,7 +138,8 @@ class AddEditLaptopViewModel(
                 ram = ram.value.trim().takeIf { it.isNotEmpty() },
                 storage = storage.value.trim().takeIf { it.isNotEmpty() },
                 category = category.value.trim().takeIf { it.isNotEmpty() },
-                stock = stock.value.toIntOrNull()
+                stock = stock.value.toIntOrNull(),
+                ownerEmail = ownerEmail
             )
 
             try {
@@ -142,12 +160,13 @@ class AddEditLaptopViewModel(
     class Factory(
         private val laptopRepository: LaptopRepository,
         private val imageUploadRepository: ImageUploadRepository,
+        private val ownerEmail: String,
         private val laptopId: String? = null
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(AddEditLaptopViewModel::class.java)) {
-                return AddEditLaptopViewModel(laptopRepository, imageUploadRepository, laptopId) as T
+                return AddEditLaptopViewModel(laptopRepository, imageUploadRepository, ownerEmail, laptopId) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
