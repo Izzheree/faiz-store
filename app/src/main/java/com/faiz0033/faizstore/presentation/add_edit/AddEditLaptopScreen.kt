@@ -1,6 +1,9 @@
 package com.faiz0033.faizstore.presentation.add_edit
 
 import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -217,7 +220,14 @@ fun AddEditLaptopScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
-                    onClick = { viewModel.saveLaptop() },
+                    onClick = { 
+                        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                        val activeNetwork = connectivityManager.activeNetwork
+                        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+                        val isOnline = capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+                        
+                        viewModel.saveLaptop(isOnline) 
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isSaving
                 ) {

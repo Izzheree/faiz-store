@@ -10,6 +10,7 @@ import com.faiz0033.faizstore.domain.repository.ImageUploadRepository
 import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.io.File
 
 class LaptopRepositoryImpl(
     private val laptopDao: LaptopDao,
@@ -108,6 +109,28 @@ class LaptopRepositoryImpl(
         for (item in unsyncedItems) {
             try {
                 var laptop = item.toDomain()
+
+                // Upload image if it is stored locally
+                val imageUrl = laptop.imageUrl
+                if (imageUrl != null && imageUrl.startsWith("file://")) {
+                    val filePath = imageUrl.removePrefix("file://")
+                    val file = File(filePath)
+                    if (file.exists()) {
+                        val bytes = file.readBytes()
+                        val uploadResult = imageUploadRepository.uploadImage(bytes, file.name)
+                        var uploadSuccess = false
+                        
+                        uploadResult.onSuccess { remoteUrl ->
+                            laptop = laptop.copy(imageUrl = remoteUrl)
+                            laptopDao.insertLaptop(laptop.toEntity(isSynced = 0))
+                            uploadSuccess = true
+                        }
+                        
+                        if (!uploadSuccess) {
+                            continue // Skip sync for this item if image upload failed
+                        }
+                    }
+                }
 
                 // Push to MockAPI
                 val isNew = laptop.id.contains("-") // UUIDs generated locally contain hyphens

@@ -86,7 +86,7 @@ class AddEditLaptopViewModel(
         _error.value = null
     }
 
-    fun saveLaptop() {
+    fun saveLaptop(isOnline: Boolean) {
         val currentName = name.value.trim()
         val currentBrand = brand.value.trim()
         val currentPrice = price.value.toDoubleOrNull()
@@ -101,8 +101,8 @@ class AddEditLaptopViewModel(
             
             var finalImageUrl = existingImageUrl
 
-            // 1. Upload Image if a new one was selected
-            if (selectedImageBytes != null) {
+            // 1. Upload Image if a new one was selected and online
+            if (selectedImageBytes != null && isOnline) {
                 _isUploadingImage.value = true
                 val result = imageUploadRepository.uploadImage(selectedImageBytes!!, "laptop_image.jpg")
                 _isUploadingImage.value = false

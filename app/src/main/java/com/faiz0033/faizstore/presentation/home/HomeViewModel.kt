@@ -48,10 +48,16 @@ class HomeViewModel(
         )
 
     init {
-        sync()
+        syncFull()
     }
 
     fun sync() {
+        viewModelScope.launch {
+            laptopRepository.syncUnsyncedLaptops()
+        }
+    }
+
+    fun syncFull() {
         viewModelScope.launch {
             laptopRepository.syncRemote(ownerEmail)
         }
