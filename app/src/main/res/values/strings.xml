@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Faiz Store</string>
+    <string name="hello_user">Hello, %1$s</string>
+    <string name="user">User</string>
+    <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="search_laptops">Search laptops...</string>
+    <string name="add_laptop">Add Laptop</string>
+    <string name="edit_laptop">Edit Laptop</string>
+    <string name="laptop_details">Laptop Details</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_laptop">Delete Laptop</string>
+    <string name="delete_confirmation">Are you sure you want to delete this laptop? This action cannot be undone.</string>
+</resources>
