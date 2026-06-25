@@ -46,6 +46,14 @@ class LaptopRepositoryImpl(
             // Step 3: Replace only synced data in Room (keep unsynced items intact)
             laptopDao.deleteSyncedLaptopsByOwner(ownerEmail)
             laptopDao.insertLaptops(myLaptops.map { it.toEntity(ownerEmail) })
+        } catch (e: retrofit2.HttpException) {
+            if (e.code() == 404) {
+                try {
+                    laptopDao.deleteSyncedLaptopsByOwner(ownerEmail)
+                } catch (dbEx: Exception) {
+                    // Ignore DB errors
+                }
+            }
         } catch (e: Exception) {
             // Offline or API error — keep using local Room database
         }
