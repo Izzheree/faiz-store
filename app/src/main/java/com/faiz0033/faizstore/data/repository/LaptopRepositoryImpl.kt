@@ -6,11 +6,10 @@ import com.faiz0033.faizstore.data.mapper.toDto
 import com.faiz0033.faizstore.data.mapper.toEntity
 import com.faiz0033.faizstore.data.remote.api.LaptopApiService
 import com.faiz0033.faizstore.domain.model.Laptop
-import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import com.faiz0033.faizstore.domain.repository.ImageUploadRepository
+import com.faiz0033.faizstore.domain.repository.LaptopRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.io.File
 
 class LaptopRepositoryImpl(
     private val laptopDao: LaptopDao,
